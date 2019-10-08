@@ -1,6 +1,6 @@
 require('mclust')
 require('ggplot2')
-source('~/projects/fftiers/src/ff-functions.R')
+source('C:/Users/benle/projects/fftiers/src/ff-functions.R')
 
 ### Parameters 
 options(echo=TRUE)
@@ -8,16 +8,17 @@ args 	<- commandArgs(trailingOnly = TRUE)
 if (length(args) != 1) {
 	print('Expected args format: Rscript main.R TRUE/FALSE')
 	stopifnot(FALSE)
+	download <- TRUE
 }
 download = toupper(as.character(args[1]))
 if (download=='T') download = TRUE
 if (download=='F') download = FALSE
 
-thisweek 		= as.numeric(floor((as.Date(Sys.Date(), format="%Y/%m/%d") - as.Date("2018-09-04", format="%Y-%m-%d"))/7))+1
+thisweek 		= as.numeric(floor((as.Date(Sys.Date(), format="%Y/%m/%d") - as.Date("2019-10-22", format="%Y-%m-%d"))/7))+1
 thisweek 		= max(0, thisweek) # 0 for pre-draft
 download.ros 	= FALSE
 useold 			= FALSE		# Do we want to use the original version of the charts?
-year			= 2018
+year			= 2019
 #download = FALSE		# Do we want to download fresh data from fantasypros?
 
 ### Set and create input / output directories
@@ -25,12 +26,12 @@ year			= 2018
 mkdir <- function(dir){ 
 	system(paste("mkdir -p", dir))
 }
-datdir = "~/projects/fftiers/dat/2017/"; mkdir(datdir)
-outputdir = paste("~/projects/fftiers/out/week", thisweek, "/", sep=""); mkdir(outputdir)
-outputdircsv = paste("~/projects/fftiers/out/week", thisweek, "/csv/", sep=""); mkdir(outputdircsv)
-outputdirpng = paste("~/projects/fftiers/out/week", thisweek, "/png/", sep=""); mkdir(outputdirpng)
-outputdirtxt = paste("~/projects/fftiers/out/week", thisweek, "/txt/", sep=""); mkdir(outputdirtxt)
-gd.outdir = "~/projects/fftiers/out/current/"; mkdir(gd.outdir)
+datdir = "C:/Users/benle/projects/fftiers/dat/2019/"; mkdir(datdir)
+outputdir = paste("C:/Users/benle/projects/fftiers/out/week", thisweek, "/", sep=""); mkdir(outputdir)
+outputdircsv = paste("C:/Users/benle/projects/fftiers/out/week", thisweek, "/csv/", sep=""); mkdir(outputdircsv)
+outputdirpng = paste("C:/Users/benle/projects/fftiers/out/week", thisweek, "/png/", sep=""); mkdir(outputdirpng)
+outputdirtxt = paste("C:/Users/benle/projects/fftiers/out/week", thisweek, "/txt/", sep=""); mkdir(outputdirtxt)
+gd.outdir = "C:/Users/benle/projects/fftiers/out/current/"; mkdir(gd.outdir)
 gd.outputdircsv = paste(gd.outdir, "csv/", sep=""); mkdir(gd.outputdircsv)
 gd.outputdirpng = paste(gd.outdir, "png/", sep=""); mkdir(gd.outputdirpng)
 gd.outputdirtxt = paste(gd.outdir, "txt/", sep=""); mkdir(gd.outputdirtxt)
@@ -42,7 +43,7 @@ system(paste('rm ', gd.outputdirtxt, '*', sep=''))
 injured <- c('Jerick McKinnon')
 
 ### Predraft data
-if (download == TRUE) download.predraft.data()
+download.predraft.data()
 
 if (FALSE) {
 	scoring.type.list = c('all', 'all-ppr', 'all-half-ppr')
@@ -54,39 +55,39 @@ if (FALSE) {
 	}
 }
 
-
-if (download == TRUE) {
-	download.data(c('qb','k','dst'))
-	if (thisweek == 0) {
-		download.data(c('rb','wr','te'), scoring='STD')
-		download.data(c('rb','wr','te'), scoring='PPR') 
-		download.data(c('rb','wr','te'), scoring='HALF')
-	}
-	if (thisweek > 0) {
-		download.data(c('flx','rb','wr','te'), scoring='STD')
-		download.data(c('flx','rb','wr','te'), scoring='PPR') 
-		download.data(c('flx','rb','wr','te'), scoring='HALF')	
-	}
-}
+# 
+# if (download == TRUE) {
+# 	download.data(c('qb','k','dst'))
+# 	if (thisweek == 0) {
+# 		download.data(c('rb','wr','te'), scoring='STD')
+# 		download.data(c('rb','wr','te'), scoring='PPR') 
+# 		download.data(c('rb','wr','te'), scoring='HALF')
+# 	}
+# 	if (thisweek > 0) {
+# 		download.data(c('flx','rb','wr','te'), scoring='STD')
+# 		download.data(c('flx','rb','wr','te'), scoring='PPR') 
+# 		download.data(c('flx','rb','wr','te'), scoring='HALF')	
+# 	}
+# }
 
 ## Weekly
-draw.tiers("qb", 1, 26, 8, highcolor=360)
-draw.tiers("rb", 1, 40, 9, highcolor=400, scoring='STD')
-draw.tiers("wr", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
-draw.tiers("te", 1, 24, 8, XLOW=5, scoring='STD')
-draw.tiers("k", 1, 20, 5, XLOW=5)
-draw.tiers("dst", 1, 20, 6, XLOW=2)
-
-draw.tiers("rb", 1, 40, 10, scoring='PPR')
-draw.tiers("wr", 1, 60, 12, highcolor=500, XLOW=10, scoring='PPR')
-draw.tiers("te", 1, 25, 8, scoring='PPR')
-
-draw.tiers("rb", 1, 40, 9, scoring='HALF')
-draw.tiers("wr", 1, 60, 10, highcolor=400, XLOW=10, scoring='HALF')
-draw.tiers("te", 1, 25, 7, scoring='HALF')
-
-if (thisweek > 0) {
-	draw.tiers("flx", 20, 95, 14, XLOW=5, highcolor=650, scoring='STD')
-	draw.tiers("flx", 20, 95, 14, XLOW=5, highcolor=650, scoring='PPR')
-	draw.tiers("flx", 20, 95, 15, XLOW=5, highcolor=650, scoring='HALF')
-}
+# draw.tiers("qb", 1, 26, 8, highcolor=360)
+# draw.tiers("rb", 1, 40, 9, highcolor=400, scoring='STD')
+# draw.tiers("wr", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
+# draw.tiers("te", 1, 24, 8, XLOW=5, scoring='STD')
+# draw.tiers("k", 1, 20, 5, XLOW=5)
+# draw.tiers("dst", 1, 20, 6, XLOW=2)
+# 
+# draw.tiers("rb", 1, 40, 10, scoring='PPR')
+# draw.tiers("wr", 1, 60, 12, highcolor=500, XLOW=10, scoring='PPR')
+# draw.tiers("te", 1, 25, 8, scoring='PPR')
+# 
+# draw.tiers("rb", 1, 40, 9, scoring='HALF')
+# draw.tiers("wr", 1, 60, 10, highcolor=400, XLOW=10, scoring='HALF')
+# draw.tiers("te", 1, 25, 7, scoring='HALF')
+# 
+# if (thisweek > 0) {
+# 	draw.tiers("flx", 20, 95, 14, XLOW=5, highcolor=650, scoring='STD')
+# 	draw.tiers("flx", 20, 95, 14, XLOW=5, highcolor=650, scoring='PPR')
+# 	draw.tiers("flx", 20, 95, 15, XLOW=5, highcolor=650, scoring='HALF')
+# }

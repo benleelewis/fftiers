@@ -462,7 +462,7 @@ def main(args):
     logger = logging.getLogger()
     # downloading settings
     position_list = ['qb', 'rb', 'wr', 'te', 'flex', 'k', 'dst']
-    start_week_date = datetime.date(2016, 9, 6)
+    start_week_date = datetime.date(2019, 9, 6)
     injured_player_list = []
     clustering_program(args, start_week_date, position_list)
 
@@ -487,8 +487,8 @@ if __name__ == "__main__":    # get all of the commandline arguments
     parser.add_argument('-t', dest='token', help="FantasyPros token", required=True)
     # optional parameters
     parser.add_argument('-down', dest='download_data', help="Boolean for if script should download data", default="True")
-    parser.add_argument('-dat', dest='data_directory', help="The directory where the data is downloaded", default="data/fftiers/2016/")
-    parser.add_argument('-plot', dest='plots_directory', help="The directory where the plots are saved", default="plots/fftiers/2016/")
+    parser.add_argument('-dat', dest='data_directory', help="The directory where the data is downloaded", default="data/fftiers/2019/")
+    parser.add_argument('-plot', dest='plots_directory', help="The directory where the plots are saved", default="plots/fftiers/2019/")
     # required for logging
     parser.add_argument('-logFile', dest='logFile', help='The log file to use', default="log.txt")
     args = parser.parse_args()

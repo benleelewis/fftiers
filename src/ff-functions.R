@@ -1,11 +1,11 @@
 
 download.py.call <- function(json_dest, csv_dest, position, scoring) {
-	year = '2018'
-	me = system('whoami', intern = TRUE)
-	parent = 'Users'
-	if (me=='ubuntu') parent = 'home'
-	if (me=='borischen') parent = 'Users'
-	api_call = paste('python /',parent,'/',me,'/projects/fftiers/src/fp_api.py -j ',json_dest,' -c ',csv_dest,' -y ',year,' -p ',position,' -w ',thisweek,' -s ',scoring,sep='')
+	year = '2019'
+	#me = system('whoami', intern = TRUE)
+	#parent = 'Users'
+	#if (me=='ubuntu') parent = 'home'
+	#if (me=='borischen') parent = 'Users'
+	api_call = paste('python3 C:/Users/benle/projects/fftiers/src/fp_api.py -j ',json_dest,' -c ',csv_dest,' -y ',year,' -p ',position,' -w ',thisweek,' -s ',scoring,sep='')
 	#dl_call = paste('python /',parent,'/',me,'/projects/fftiers/src/fp_dl.py -u ',url,' -d ',dest,' -c ',csv_dest,' -n ',ncol,sep='')
 	print(api_call)
 	system(api_call)
@@ -26,7 +26,7 @@ download.data <- function(pos.list=c('rb','wr','te','flx'), scoring='STD') {
 		  		url = paste('https://www.fantasypros.com/nfl/rankings/',mp,'.php?week=',thisweek,'\\&export=xls', sep='')
 
 		  	#url = paste('https://www.fantasypros.com/nfl/rankings/',mp,'.php?filters=64:113:120:125:127:317:406:534\\&week=',thisweek,'\\&export=xls', sep='')
-		  	head.dir = '~/projects/fftiers/dat/2018/week-'
+		  	head.dir = 'C:/Users/benle/projects/fftiers/dat/2019/week-'
 		  	pos.scoring = paste(position, scoring, sep='-')
 		  	json_dest = paste(head.dir, thisweek, '-', pos.scoring, '.json', sep="")
 			csv_dest = paste(head.dir, thisweek, '-', pos.scoring ,'-raw.csv', sep="")
@@ -40,17 +40,17 @@ download.data <- function(pos.list=c('rb','wr','te','flx'), scoring='STD') {
 download.predraft.data <- function() {
 	# overall rankings download:
 
-	base_dest = '~/projects/fftiers/dat/2018/week-0-ALL-STD-raw'
+	base_dest = 'C:/Users/benle/projects/fftiers/dat/2019/week-0-ALL-STD-raw'
 	dest = paste(base_dest, '.txt',sep='')
 	csv_dest = paste(base_dest, '.csv',sep='')
 	download.py.call(dest, csv_dest, position='ALL', scoring='STD')
 	
-	base_dest = '~/projects/fftiers/dat/2018/week-0-ALL-PPR-raw'
+	base_dest = 'C:/Users/benle/projects/fftiers/dat/2019/week-0-ALL-PPR-raw'
 	dest = paste(base_dest, '.txt',sep='')
 	csv_dest = paste(base_dest, '.csv',sep='')
 	download.py.call(dest, csv_dest, position='ALL', scoring='PPR')
 
-	base_dest = '~/projects/fftiers/dat/2018/week-0-ALL-HALF-PPR-raw'
+	base_dest = 'C:/Users/benle/projects/fftiers/dat/2019/week-0-ALL-HALF-PPR-raw'
 	dest = paste(base_dest, '.txt',sep='')
 	csv_dest = paste(base_dest, '.csv',sep='')
 	#download.py.call(dest, csv_dest, position='ALL', scoring='half-point-ppr')

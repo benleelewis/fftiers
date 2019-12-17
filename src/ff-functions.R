@@ -18,7 +18,7 @@ download.data <- function(pos.list=c('rb','wr','te','flx'), scoring='STD') {
 		for (mp in pos.list) {
 			Sys.sleep(1)
 			position = toupper(mp)
-		 	#rmold1 = paste('rm ~/projects/fftiers/dat/2018/week-', thisweek, '-',mp,'-raw.txt', sep='')
+		 	#rmold1 = paste('rm ~/projects/fftiers/dat/2019/week-', thisweek, '-',mp,'-raw.txt', sep='')
 		 	#system(rmold1)
 		 	if (thisweek == 0)
 		 		url = paste('https://www.fantasypros.com/nfl/rankings/',mp,'-cheatsheets.php', sep='')

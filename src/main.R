@@ -2,7 +2,7 @@ require('mclust')
 require('ggplot2')
 source('C:/Users/benle/projects/fftiers/src/ff-functions.R')
 
-### Parameters 
+### Parameters
 options(echo=TRUE)
 args 	<- commandArgs(trailingOnly = TRUE)
 if (length(args) != 1) {
@@ -23,7 +23,7 @@ year			= 2019
 
 ### Set and create input / output directories
 
-mkdir <- function(dir){ 
+mkdir <- function(dir){
 	system(paste("mkdir -p", dir))
 }
 datdir = "C:/Users/benle/projects/fftiers/dat/2019/"; mkdir(datdir)
@@ -40,8 +40,6 @@ system(paste('rm ', gd.outputdirpng, '*', sep=''))
 system(paste('rm ', gd.outputdirtxt, '*', sep=''))
 
 ## If there are any injured players, list them here to remove them
-#injured <- c('Jerick McKinnon')
-
 ### Predraft data
 #download.predraft.data()
 

@@ -5,7 +5,7 @@ download.py.call <- function(json_dest, csv_dest, position, scoring) {
 	#parent = 'Users'
 	#if (me=='ubuntu') parent = 'home'
 	#if (me=='borischen') parent = 'Users'
-	api_call = paste('python3 C:/Users/benle/projects/fftiers/src/fp_api.py -j ',json_dest,' -c ',csv_dest,' -y ',year,' -p ',position,' -w ',thisweek,' -s ',scoring,sep='')
+	api_call = paste('python "C:/Users/benle/projects/fftiers/src/fp_api.py" -j ',json_dest,' -c ',csv_dest,' -y ',year,' -p ',position,' -w ',thisweek,' -s ',scoring,sep='')
 	#dl_call = paste('python /',parent,'/',me,'/projects/fftiers/src/fp_dl.py -u ',url,' -d ',dest,' -c ',csv_dest,' -n ',ncol,sep='')
 	print(api_call)
 	system(api_call)
@@ -29,7 +29,7 @@ download.data <- function(pos.list=c('rb','wr','te','flx'), scoring='STD') {
 		  	head.dir = 'C:/Users/benle/projects/fftiers/dat/2019/week-'
 		  	pos.scoring = paste(position, scoring, sep='-')
 		  	json_dest = paste(head.dir, thisweek, '-', pos.scoring, '.json', sep="")
-			csv_dest = paste(head.dir, thisweek, '-', pos.scoring ,'-raw.csv', sep="")
+			  csv_dest = paste(head.dir, thisweek, '-', pos.scoring ,'-raw.csv', sep="")
 		    download.py.call(json_dest, csv_dest, position, scoring)
 	 	}	  
 	}
@@ -78,20 +78,27 @@ debug.comment <- function() {
 }
 
 
-draw.tiers <- function(pos='all', low=1, high=100, k=3, adjust=0, XLOW=0, highcolor=360, num.higher.tiers=0, scoring='STD', save=TRUE) {
-	# pos='all'; low=1; high=100; k=3; adjust=0; XLOW=0; highcolor=360; num.higher.tiers=0; scoring='STD'
+draw.tiers <- function(pos='all', low=1, high=40, k=3, adjust=0, XLOW=0, highcolor=360, num.higher.tiers=0, scoring='STD', save=TRUE) {
+	#pos='all'; low=1; high=55; k=10; adjust=0; XLOW=0; highcolor=360; num.higher.tiers=0; scoring='STD'; thisweek = 0
+	
 	# pos='QB'; low=1; high=20; k=6; adjust=0; XLOW=0; highcolor=360; num.higher.tiers=0; scoring='STD'
 	position = toupper(pos); 
 	pos.scoring = paste(position, scoring, sep='-')
 	tpos = pos.scoring
-	head.dir = '~/projects/fftiers/dat/2018/week-'
+	head.dir = 'C:/Users/benle/projects/fftiers/dat/2019/week-'
 	csv_path = paste(head.dir, thisweek, '-', pos.scoring ,'-raw.csv', sep="")
-	if (pos == 'all-ppr') csv_path 		= paste(head.dir, thisweek, '-', position ,'-raw.csv', sep="")
-	if (pos == 'all-half-ppr') csv_path = paste(head.dir, thisweek, '-', position ,'-raw.csv', sep="")
-
+	#if (pos == 'all-ppr') csv_path 		= paste(head.dir, thisweek, '-', position ,'-raw.csv', sep="")
+	#if (pos == 'all-half-ppr') csv_path = paste(head.dir, thisweek, '-', position ,'-raw.csv', sep="")
+#library(magrittr)
+#	library(glue)
 	dat = read.delim(csv_path, sep=",")
-	if (thisweek == 0) colnames(dat)= c("Rank","Player.Name","Position","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
-	if (thisweek >= 1) colnames(dat)= c("Rank","Player.Name","Matchup","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
+	#Split to position
+	if (thisweek == 0) colnames(dat)= c("Rank","Player.Name","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev", 'Position')
+	#dat$Player.Name = gsub("[(].*$","",dat$Player.Name)
+	dat$Player.Name = str_replace(dat$Player.Name,"[(].*$","")
+	dat$Player.Name=  str_trim(dat$Player.Name)	
+	
+	  	#if (thisweek >= 1) colnames(dat)= c("Rank","Player.Name","Matchup","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
 	if (k <= 10) highcolor <- 360
 	if (k > 11) highcolor <- 450
 	if (k > 13) highcolor <- 550
@@ -99,7 +106,7 @@ draw.tiers <- function(pos='all', low=1, high=100, k=3, adjust=0, XLOW=0, highco
 	if (scoring == 'STD') tpos = position
 
 	num.tiers = error.bar.plot(	low=low, 
-								high=high, 
+								high=high,  
 								k=k, 
 								tpos=tpos, 
 								dat=dat, 
@@ -107,7 +114,7 @@ draw.tiers <- function(pos='all', low=1, high=100, k=3, adjust=0, XLOW=0, highco
 								XLOW=XLOW, 
 								highcolor=highcolor,
 								num.higher.tiers=num.higher.tiers,
-								save=save)
+								save=TRUE)
 	return(num.tiers)
 }
 
@@ -116,24 +123,25 @@ draw.tiers <- function(pos='all', low=1, high=100, k=3, adjust=0, XLOW=0, highco
 
 error.bar.plot <- function(pos="NA", low=1, high=24, k=8, format="NA", title="dummy", tpos="QB", dat, 
 	adjust=0, XLOW=0, highcolor=360, num.higher.tiers=0, save=TRUE) {
-	
+  #pos='all'; low=1; high=100; k=3; adjust=0; XLOW=0; highcolor=360; num.higher.tiers=0; scoring='STD'; thisweek = 0
+  
 	Sys.setenv(TZ='PST8PDT')
 	curr.time = as.character(format(Sys.time(), "%a %b %d %Y %X"))
 	curr.time = substr(curr.time, 1, nchar(curr.time)-3)
-	if (tpos!='ALL') title = paste("Week ",thisweek," - ",tpos," Tiers", ' - ', curr.time, ' PST', sep="")
-	if (tpos=='ALL') title = paste("Pre-draft Tiers - Top 200", ' - ', curr.time, sep="")
-	if ((thisweek==0) && (tpos!='ALL')) title = paste("2018 Draft - ",tpos," Tiers", ' - ', curr.time, ' PST', sep="")
-	if ((thisweek==0) && (tpos=='ALL')) title = paste("2018 Draft - Top 200 Tiers", ' - ', curr.time, ' PST', sep="")
+	# if (tpos!='ALL') title = paste("Week ",thisweek," - ",tpos," Tiers", ' - ', curr.time, ' PST', sep="")
+	# if (tpos=='ALL') title = paste("Pre-draft Tiers - Top 200", ' - ', curr.time, sep="")
+	# if ((thisweek==0) && (tpos!='ALL')) title = paste("2019 Draft - ",tpos," Tiers", ' - ', curr.time, ' PST', sep="")
+	if ((thisweek==0) && (tpos=='ALL')) title = paste("2019 Draft - Auction Tiers", ' - ', curr.time, ' PST', sep="")
 	#dat$Rank = 1:nrow(dat)
 	this.pos = dat
 	this.pos = this.pos[low:high,]
 	this.pos$position.rank <- low+c(1:nrow(this.pos))-1	
-  	this.pos$position.rank = -this.pos$position.rank
+  this.pos$position.rank = -this.pos$position.rank
 
 	# Replace column names
-	colnames(this.pos)[which(colnames(this.pos)=="Avg")] <- 'Avg.Rank'
+	colnames(this.pos)[which(colnames(this.pos)=="AVG")] <- 'Avg.Rank'
 	colnames(this.pos)[2] <- 'Player.Name'
-	colnames(this.pos)[which(colnames(this.pos)=="Pos")] <- 'Position'
+  	colnames(this.pos)[which(colnames(this.pos)=="Pos")] <- 'Position'
 	colnames(this.pos)[which(colnames(this.pos)=="Team.DST")] <- 'Player.Name'
 	
 	# Find clusters
@@ -189,10 +197,9 @@ error.bar.plot <- function(pos="NA", low=1, high=24, k=8, format="NA", title="du
 
 	if (num.higher.tiers>0) this.pos$Tier 	= as.character(as.numeric(as.character(this.pos$mcluster))+num.higher.tiers)
 
-	bigfont = c("QB","TE","K","DST", "PPR-TE", "TE-HALF", "TE-PPR")
-	smfont = c("RB", "RB-PPR", "RB-HALF")
-	tinyfont = c("WR","FLX", "WR-PPR","FLX-PPR", 
-				 "WR-HALF","FLX-HALF", 'ALL', 'ALL-PPR', 'ALL-HALF-PPR')
+	bigfont = c("C", "SG","SF","PF","PG")
+	smfont = c("G", "F", "C")
+	tinyfont = c()
 	
 	if (tpos %in% bigfont) {font = 3.5; barsize=1.5;  dotsize=2;   }
 	if (tpos %in% smfont)  {font = 3;   barsize=1.25; dotsize=1.5; }
@@ -205,16 +212,16 @@ error.bar.plot <- function(pos="NA", low=1, high=24, k=8, format="NA", title="du
 	p = p + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5))
     p = p + geom_errorbar(aes(ymin = Avg.Rank - Std.Dev/2, ymax = Avg.Rank + Std.Dev/2, width=0.2, colour=Tier), size=barsize*0.8, alpha=0.4)
 	p = p + geom_point(colour="grey20", size=dotsize) 
-    p = p + coord_flip()
+  p = p + coord_flip()
     #p = p + annotate("text", x = Inf, y = -Inf, label = "www.borischen.co", hjust=1.1, vjust=-1.1, col="white", cex=6, fontface = "bold", alpha = 0.8)
-	if (tpos %in% bigfont)     			
+	if (tpos %in% bigfont)
     	p = p + geom_text(aes(label=Player.Name, colour=Tier, y = Avg.Rank - nchar/6 - Std.Dev/1.4), size=font)
-	if (tpos %in% smfont)     			
-    	p = p + geom_text(aes(label=Player.Name, colour=Tier, y = Avg.Rank - nchar/5 - Std.Dev/1.5), size=font) 
-	if (tpos %in% tinyfont)     			
-    	p = p + geom_text(aes(label=Player.Name, colour=Tier, y = Avg.Rank - nchar/3 - Std.Dev/1.8), size=font) 
+	if (tpos %in% smfont)
+    	p = p + geom_text(aes(label=Player.Name, colour=Tier, y = Avg.Rank - nchar/5 - Std.Dev/1.5), size=font)
+	if (tpos %in% tinyfont)
+    	p = p + geom_text(aes(label=Player.Name, colour=Tier, y = Avg.Rank - nchar/3 - Std.Dev/1.8), size=font)
     if ((tpos == 'ALL') | (tpos == 'ALL-PPR')) {
-        	p = p + geom_text(aes(label=Player.Name, colour=Tier, y = Avg.Rank - nchar/3 - Std.Dev/1.8), size=font) 
+        	p = p + geom_text(aes(label=trimws(Player.Name), colour=Tier, y = Avg.Rank - nchar/3 - Std.Dev/1.8), size=font)
         	p = p + geom_text(aes(label=Position, y = Avg.Rank + Std.Dev/1.8 + 1), size=font, colour='#888888') }
     p = p + scale_x_continuous("Expert Consensus Rank")
     p = p + ylab("Average Expert Rank")
@@ -223,9 +230,9 @@ error.bar.plot <- function(pos="NA", low=1, high=24, k=8, format="NA", title="du
 	p = p + scale_colour_hue(l=55, h=c(0, highcolor))
     maxy = max( abs(this.pos$Avg.Rank)+this.pos$Std.Dev/2) 
     
-	if (tpos  != 'FLX') p = p + ylim(-5, maxy)
-    if ((tpos == "FLX") | (tpos=="FLX-PPR")| (tpos=="WR-PPR")  | (tpos == "FLX-HALF") | (tpos == "WR-HALF")) p = p + ylim(0-XLOW, maxy)
-	if ((tpos == 'ALL') |(tpos == 'WR') | (tpos == 'ALL-PPR') | (tpos == 'ALL-HALF-PPR')) p = p + ylim(low-XLOW, maxy+5)
+	if (tpos  != 'FLX') p = p + ylim(-15, maxy)
+    if ((tpos == "FLX") | (tpos=="FLX-PPR")| (tpos=="WR-PPR")  | (tpos == "FLX-HALF") | (tpos == "WR-HALF")) p = p + ylim(-10, maxy)
+	if ((tpos == 'ALL') |(tpos == 'WR') | (tpos == 'ALL-PPR') | (tpos == 'ALL-HALF-PPR')) p = p + ylim(-10, maxy+5)
 
 	outfile 	= paste(outputdirpng, "week-", thisweek, "-", tpos, ".png", sep="")
 	gd.outfile 	= paste(gd.outputdirpng, "weekly-", tpos, ".png", sep="")

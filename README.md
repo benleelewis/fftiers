@@ -1,5 +1,7 @@
-Welcome to borischen.co's Fantasy Football Tiers
+Inspired by borischen.co's Fantasy Football Tiers
 
-Here lies the code used for generating the tiers behind www.borischen.co.
+https://www.reddit.com/r/fantasybball/comments/dhs6d8/fantasypros_visualized_tiers_and_rankings_2019/
 
-All data is exclusively from www.fantasypros.com.
+https://imgur.com/gallery/hpFX6Dq
+
+![Forward](https://i.imgur.com/ibFQBJ6.png)

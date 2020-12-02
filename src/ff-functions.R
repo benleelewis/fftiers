@@ -1,17 +1,17 @@
 
 download.py.call <- function(json_dest, csv_dest, position, scoring) {
-	year = '2019'
+	year = '2020'
 	me = system('whoami', intern = TRUE)
 	parent = 'Users'
-	if (me=='ubuntu') parent = 'home'
-	if (me=='borischen') parent = 'Users'
-	api_call = paste('python /',parent,'/',me,'/projects/fftiers/src/fp_api.py -j ',json_dest,' -c ',csv_dest,' -y ',year,' -p ',position,' -w ',thisweek,' -s ',scoring,sep='')
-	#dl_call = paste('python /',parent,'/',me,'/projects/fftiers/src/fp_dl.py -u ',url,' -d ',dest,' -c ',csv_dest,' -n ',ncol,sep='')
+	if (me=='benl') parent = 'home'
+	#if (me=='borischen') parent = 'Users'
+	api_call = paste('python3 /',parent,'/',me,'/projects/fftiers/src/fp_api.py -j ',json_dest,' -c ',csv_dest,' -y ',year,' -p ',position,' -w ',thisweek,' -s ',scoring,sep='')
+	#dl_call = paste('python3 /',parent,'/',me,'/projects/fftiers/src/fp_dl.py -u ',url,' -d ',dest,' -c ',csv_dest,' -n ',ncol,sep='')
 	print(api_call)
 	system(api_call)
 }
 
-download.data <- function(pos.list=c('rb','wr','te','flx'), scoring='STD') {
+download.data <- function(pos.list=c('pg','sg','sf','pf','g','f','c'), scoring='STD') {
 	# filters=22:64:113:120:125:127:317:406:534
 	# filters=64:113:120:125:127:317:406:534
 	if (download == TRUE) {
@@ -21,9 +21,9 @@ download.data <- function(pos.list=c('rb','wr','te','flx'), scoring='STD') {
 		 	#rmold1 = paste('rm ~/projects/fftiers/dat/2019/week-', thisweek, '-',mp,'-raw.txt', sep='')
 		 	#system(rmold1)
 		 	if (thisweek == 0)
-		 		url = paste('https://www.fantasypros.com/nfl/rankings/',mp,'-cheatsheets.php', sep='')
+		 		url = paste('https://www.fantasypros.com/nba/rankings/',mp,'.php', sep='')
 		 	if (thisweek != 0) 
-		  		url = paste('https://www.fantasypros.com/nfl/rankings/',mp,'.php?week=',thisweek,'\\&export=xls', sep='')
+		  		url = paste('https://www.fantasypros.com/nba/rankings/',mp,'.php?week=',thisweek,'\\&export=xls', sep='')
 
 		  	#url = paste('https://www.fantasypros.com/nfl/rankings/',mp,'.php?filters=64:113:120:125:127:317:406:534\\&week=',thisweek,'\\&export=xls', sep='')
 		  	head.dir = '~/projects/fftiers/dat/2019/week-'
@@ -40,21 +40,21 @@ download.data <- function(pos.list=c('rb','wr','te','flx'), scoring='STD') {
 download.predraft.data <- function() {
 	# overall rankings download:
 
-	base_dest = '~/projects/fftiers/dat/2019/week-0-ALL-STD-raw'
+	base_dest = '~/projects/fftiers/dat/2020/week-0-ALL-STD-raw'
 	dest = paste(base_dest, '.txt',sep='')
 	csv_dest = paste(base_dest, '.csv',sep='')
-	download.py.call(dest, csv_dest, position='ALL', scoring='STD')
+	download.py.call(dest, csv_dest, position='overall', scoring='STD')
 	
-	base_dest = '~/projects/fftiers/dat/2019/week-0-ALL-PPR-raw'
-	dest = paste(base_dest, '.txt',sep='')
-	csv_dest = paste(base_dest, '.csv',sep='')
-	download.py.call(dest, csv_dest, position='ALL', scoring='PPR')
+	# base_dest = '~/projects/fftiers/dat/2019/week-0-ALL-PPR-raw'
+	# dest = paste(base_dest, '.txt',sep='')
+	# csv_dest = paste(base_dest, '.csv',sep='')
+	# download.py.call(dest, csv_dest, position='overall', scoring='PPR')
 
-	base_dest = '~/projects/fftiers/dat/2019/week-0-ALL-HALF-PPR-raw'
-	dest = paste(base_dest, '.txt',sep='')
-	csv_dest = paste(base_dest, '.csv',sep='')
-	#download.py.call(dest, csv_dest, position='ALL', scoring='half-point-ppr')
-	download.py.call(dest, csv_dest, position='ALL', scoring='HALF')
+	# base_dest = '~/projects/fftiers/dat/2019/week-0-ALL-HALF-PPR-raw'
+	# dest = paste(base_dest, '.txt',sep='')
+	# csv_dest = paste(base_dest, '.csv',sep='')
+	# #download.py.call(dest, csv_dest, position='ALL', scoring='half-point-ppr')
+	# download.py.call(dest, csv_dest, position='overall', scoring='HALF')
 }  
 
 is.tpos.all <- function(tpos) {
@@ -84,7 +84,7 @@ draw.tiers <- function(pos='all', low=1, high=100, k=3, adjust=0, XLOW=0, highco
 	position = toupper(pos); 
 	pos.scoring = paste(position, scoring, sep='-')
 	tpos = pos.scoring
-	head.dir = '~/projects/fftiers/dat/2019/week-'
+	head.dir = '~/projects/fftiers/dat/2020/week-'
 	csv_path = paste(head.dir, thisweek, '-', pos.scoring ,'-raw.csv', sep="")
 	if (pos == 'all-ppr') csv_path 		= paste(head.dir, thisweek, '-', position ,'-raw.csv', sep="")
 	if (pos == 'all-half-ppr') csv_path = paste(head.dir, thisweek, '-', position ,'-raw.csv', sep="")
@@ -122,8 +122,8 @@ error.bar.plot <- function(pos="NA", low=1, high=24, k=8, format="NA", title="du
 	curr.time = substr(curr.time, 1, nchar(curr.time)-3)
 	if (tpos!='ALL') title = paste("Week ",thisweek," - ",tpos," Tiers", ' - ', curr.time, ' PST', sep="")
 	if (tpos=='ALL') title = paste("Pre-draft Tiers - Top 200", ' - ', curr.time, sep="")
-	if ((thisweek==0) && (tpos!='ALL')) title = paste("2019 Draft - ",tpos," Tiers", ' - ', curr.time, ' PST', sep="")
-	if ((thisweek==0) && (tpos=='ALL')) title = paste("2019 Draft - Top 200 Tiers", ' - ', curr.time, ' PST', sep="")
+	if ((thisweek==0) && (tpos!='ALL')) title = paste("2020 Draft - ",tpos," Tiers", ' - ', curr.time, ' PST', sep="")
+	if ((thisweek==0) && (tpos=='ALL')) title = paste("2020 Draft - Top 200 Tiers", ' - ', curr.time, ' PST', sep="")
 	#dat$Rank = 1:nrow(dat)
 	this.pos = dat
 	this.pos = this.pos[low:high,]
@@ -189,11 +189,11 @@ error.bar.plot <- function(pos="NA", low=1, high=24, k=8, format="NA", title="du
 
 	if (num.higher.tiers>0) this.pos$Tier 	= as.character(as.numeric(as.character(this.pos$mcluster))+num.higher.tiers)
 
-	bigfont = c("QB","TE","K","DST", "PPR-TE", "TE-HALF", "TE-PPR")
-	smfont = c("RB", "RB-PPR", "RB-HALF")
-	tinyfont = c("WR","FLX", "WR-PPR","FLX-PPR", 
-				 "WR-HALF","FLX-HALF", 'ALL', 'ALL-PPR', 'ALL-HALF-PPR')
-	
+	#bigfont = c("QB","TE","K","DST", "PPR-TE", "TE-HALF", "TE-PPR")
+	#smfont = c("RB", "RB-PPR", "RB-HALF")
+	#tinyfont = c("WR","FLX", "WR-PPR","FLX-PPR", 
+	#			 "WR-HALF","FLX-HALF", 'ALL', 'ALL-PPR', 'ALL-HALF-PPR')
+	tinyfont = c("PG","SG", "SF", "PF", "C", "G", "F")
 	if (tpos %in% bigfont) {font = 3.5; barsize=1.5;  dotsize=2;   }
 	if (tpos %in% smfont)  {font = 3;   barsize=1.25; dotsize=1.5; }
 	if (tpos %in% tinyfont){font = 2.5; barsize=1;    dotsize=1;   }
@@ -223,6 +223,7 @@ error.bar.plot <- function(pos="NA", low=1, high=24, k=8, format="NA", title="du
 	p = p + scale_colour_hue(l=55, h=c(0, highcolor))
     maxy = max( abs(this.pos$Avg.Rank)+this.pos$Std.Dev/2) 
     
+	#Update to include basketball positions
 	if (tpos  != 'FLX') p = p + ylim(-5, maxy)
     if ((tpos == "FLX") | (tpos=="FLX-PPR")| (tpos=="WR-PPR")  | (tpos == "FLX-HALF") | (tpos == "WR-HALF")) p = p + ylim(0-XLOW, maxy)
 	if ((tpos == 'ALL') |(tpos == 'WR') | (tpos == 'ALL-PPR') | (tpos == 'ALL-HALF-PPR')) p = p + ylim(low-XLOW, maxy+5)

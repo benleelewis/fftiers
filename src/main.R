@@ -13,11 +13,13 @@ download = toupper(as.character(args[1]))
 if (download=='T') download = TRUE
 if (download=='F') download = FALSE
 
-thisweek 		= as.numeric(floor((as.Date(Sys.Date(), format="%Y/%m/%d") - as.Date("2019-09-03", format="%Y-%m-%d"))/7))+1
-thisweek 		= max(0, thisweek) # 0 for pre-draft
+startofseason   = "2020-12-22"
+#thisweek 		= as.numeric(floor((as.Date(Sys.Date(), format="%Y/%m/%d") - as.Date(startofseason, format="%Y-%m-%d"))/7))+1
+#thisweek 		= max(0, thisweek) # 0 for pre-draft
+thisweek = 0
 download.ros 	= FALSE
 useold 			= FALSE		# Do we want to use the original version of the charts?
-year			= 2019
+year			= 2020
 #download = FALSE		# Do we want to download fresh data from fantasypros?
 
 ### Set and create input / output directories
@@ -25,7 +27,7 @@ year			= 2019
 mkdir <- function(dir){
 	system(paste("mkdir -p", dir))
 }
-datdir = "~/projects/fftiers/dat/2017/"; mkdir(datdir)
+datdir = "~/projects/fftiers/dat/2020/"; mkdir(datdir)
 outputdir = paste("~/projects/fftiers/out/week", thisweek, "/", sep=""); mkdir(outputdir)
 outputdircsv = paste("~/projects/fftiers/out/week", thisweek, "/csv/", sep=""); mkdir(outputdircsv)
 outputdirpng = paste("~/projects/fftiers/out/week", thisweek, "/png/", sep=""); mkdir(outputdirpng)
@@ -54,38 +56,55 @@ if (thisweek == 0) {
 }
 
 
-if (download == TRUE) {
-	download.data(c('qb','k','dst'))
-	if (thisweek == 0) {
-		download.data(c('rb','wr','te'), scoring='STD')
-		download.data(c('rb','wr','te'), scoring='PPR')
-		download.data(c('rb','wr','te'), scoring='HALF')
-	}
-	if (thisweek > 0) {
-		download.data(c('flx','rb','wr','te'), scoring='STD')
-		download.data(c('flx','rb','wr','te'), scoring='PPR')
-		download.data(c('flx','rb','wr','te'), scoring='HALF')
-	}
-}
+#Download data for each position
+
+download.data()
+
+# #if (download == TRUE) {
+# 	download.data(c('qb','k','dst'))
+# 	if (thisweek == 0) {
+# 		download.data(c('rb','wr','te'), scoring='STD')
+# 		download.data(c('rb','wr','te'), scoring='PPR')
+# 		download.data(c('rb','wr','te'), scoring='HALF')
+# 	}
+# 	if (thisweek > 0) {
+# 		download.data(c('flx','rb','wr','te'), scoring='STD')
+# 		download.data(c('flx','rb','wr','te'), scoring='PPR')
+# 		download.data(c('flx','rb','wr','te'), scoring='HALF')
+# 	}
+# }
+
+#Draw tiers for each position
+
+#PG, SG, SF, PF, C, G, F, C
+
+draw.tiers("pg", 1, 26, 8, highcolor=360)
+draw.tiers("sg", 1, 40, 9, highcolor=400, scoring='STD')
+draw.tiers("sf", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
+draw.tiers("pf", 1, 24, 8, XLOW=5, scoring='STD')
+draw.tiers("c", 1, 20, 5, XLOW=5)
+draw.tiers("f", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
+draw.tiers("g", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
+
 
 ## Weekly
-draw.tiers("qb", 1, 26, 8, highcolor=360)
-draw.tiers("rb", 1, 40, 9, highcolor=400, scoring='STD')
-draw.tiers("wr", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
-draw.tiers("te", 1, 24, 8, XLOW=5, scoring='STD')
-draw.tiers("k", 1, 20, 5, XLOW=5)
-draw.tiers("dst", 1, 20, 6, XLOW=2)
+#draw.tiers("qb", 1, 26, 8, highcolor=360)
+#draw.tiers("rb", 1, 40, 9, highcolor=400, scoring='STD')
+#draw.tiers("wr", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
+#draw.tiers("te", 1, 24, 8, XLOW=5, scoring='STD')
+#draw.tiers("k", 1, 20, 5, XLOW=5)
+# #draw.tiers("dst", 1, 20, 6, XLOW=2)
 
-draw.tiers("rb", 1, 40, 10, scoring='PPR')
-draw.tiers("wr", 1, 60, 12, highcolor=500, XLOW=10, scoring='PPR')
-draw.tiers("te", 1, 25, 8, scoring='PPR')
+# draw.tiers("rb", 1, 40, 10, scoring='PPR')
+# draw.tiers("wr", 1, 60, 12, highcolor=500, XLOW=10, scoring='PPR')
+# draw.tiers("te", 1, 25, 8, scoring='PPR')
 
-draw.tiers("rb", 1, 40, 9, scoring='HALF')
-draw.tiers("wr", 1, 60, 10, highcolor=400, XLOW=10, scoring='HALF')
-draw.tiers("te", 1, 25, 7, scoring='HALF')
+# draw.tiers("rb", 1, 40, 9, scoring='HALF')
+# draw.tiers("wr", 1, 60, 10, highcolor=400, XLOW=10, scoring='HALF')
+# draw.tiers("te", 1, 25, 7, scoring='HALF')
 
-if (thisweek > 0) {
-	draw.tiers("flx", 20, 95, 14, XLOW=5, highcolor=650, scoring='STD')
-	draw.tiers("flx", 20, 95, 14, XLOW=5, highcolor=650, scoring='PPR')
-	draw.tiers("flx", 20, 95, 15, XLOW=5, highcolor=650, scoring='HALF')
-}
+# if (thisweek > 0) {
+# 	draw.tiers("flx", 20, 95, 14, XLOW=5, highcolor=650, scoring='STD')
+# 	draw.tiers("flx", 20, 95, 14, XLOW=5, highcolor=650, scoring='PPR')
+# 	draw.tiers("flx", 20, 95, 15, XLOW=5, highcolor=650, scoring='HALF')
+# }

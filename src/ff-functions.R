@@ -92,8 +92,9 @@ draw.tiers <- function(pos='all', low=1, high=100, k=3, adjust=0, XLOW=0, highco
 	dat = read.delim(csv_path, sep=",")
 	if (thisweek == 0) colnames(dat)= c("Rank","Player.Name","Team","Position","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
 	#Need to order them by Avg? Kawhi and Butler are off (are ~20, should be 5-6)
-	#dat <- dat %>%
-	#	arrange(Avg.Rank)
+	dat <- dat %>%
+		arrange(Avg.Rank)
+		mutate(Rank =  row_number())
 	#if (thisweek >= 1) colnames(dat)= c("Rank","Player.Name","Matchup","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
 	if (k <= 10) highcolor <- 360
 	if (k > 11) highcolor <- 450

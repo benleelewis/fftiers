@@ -84,14 +84,17 @@ draw.tiers <- function(pos='all', low=1, high=100, k=3, adjust=0, XLOW=0, highco
 	position = toupper(pos); 
 	pos.scoring = paste(position, scoring, sep='-')
 	tpos = pos.scoring
-	head.dir = '~/projects/fftiers/dat/2020/week-'
-	csv_path = paste(head.dir, thisweek, '-', pos.scoring ,'-raw.csv', sep="")
-	if (pos == 'all-ppr') csv_path 		= paste(head.dir, thisweek, '-', position ,'-raw.csv', sep="")
-	if (pos == 'all-half-ppr') csv_path = paste(head.dir, thisweek, '-', position ,'-raw.csv', sep="")
+	head.dir = '~/projects/fftiers/dat/2020/week-0/FantasyPros_2020_'
+	csv_path = paste(head.dir, pos ,'_NBA_Rankings.csv', sep="")
+	#if (pos == 'all-ppr') csv_path 		= paste(head.dir, thisweek, '-', position ,'-raw.csv', sep="")
+	#if (pos == 'all-half-ppr') csv_path = paste(head.dir, thisweek, '-', position ,'-raw.csv', sep="")
 
 	dat = read.delim(csv_path, sep=",")
-	if (thisweek == 0) colnames(dat)= c("Rank","Player.Name","Position","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
-	if (thisweek >= 1) colnames(dat)= c("Rank","Player.Name","Matchup","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
+	if (thisweek == 0) colnames(dat)= c("Rank","Player.Name","Team","Position","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
+	#Need to order them by Avg? Kawhi and Butler are off (are ~20, should be 5-6)
+	#dat <- dat %>%
+	#	arrange(Avg.Rank)
+	#if (thisweek >= 1) colnames(dat)= c("Rank","Player.Name","Matchup","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
 	if (k <= 10) highcolor <- 360
 	if (k > 11) highcolor <- 450
 	if (k > 13) highcolor <- 550
@@ -114,7 +117,7 @@ draw.tiers <- function(pos='all', low=1, high=100, k=3, adjust=0, XLOW=0, highco
 
 ### main plotting function
 
-error.bar.plot <- function(pos="NA", low=1, high=24, k=8, format="NA", title="dummy", tpos="QB", dat, 
+error.bar.plot <- function(pos="Overall", low=1, high=24, k=8, format="NA", title="dummy", tpos="QB", dat, 
 	adjust=0, XLOW=0, highcolor=360, num.higher.tiers=0, save=TRUE) {
 	
 	Sys.setenv(TZ='PST8PDT')
@@ -189,8 +192,8 @@ error.bar.plot <- function(pos="NA", low=1, high=24, k=8, format="NA", title="du
 
 	if (num.higher.tiers>0) this.pos$Tier 	= as.character(as.numeric(as.character(this.pos$mcluster))+num.higher.tiers)
 
-	#bigfont = c("QB","TE","K","DST", "PPR-TE", "TE-HALF", "TE-PPR")
-	#smfont = c("RB", "RB-PPR", "RB-HALF")
+	bigfont = c("QB","TE","K","DST", "PPR-TE", "TE-HALF", "TE-PPR")
+	smfont = c("Overall")
 	#tinyfont = c("WR","FLX", "WR-PPR","FLX-PPR", 
 	#			 "WR-HALF","FLX-HALF", 'ALL', 'ALL-PPR', 'ALL-HALF-PPR')
 	tinyfont = c("PG","SG", "SF", "PF", "C", "G", "F")

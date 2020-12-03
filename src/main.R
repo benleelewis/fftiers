@@ -79,13 +79,22 @@ injured <- c('')
 
 #PG, SG, SF, PF, C, G, F, C
 
-draw.tiers("PG", 1, 26, 8, highcolor=360)
-draw.tiers("SG", 1, 40, 9, highcolor=400, scoring='STD')
-draw.tiers("SF", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
-draw.tiers("PF", 1, 24, 8, XLOW=5, scoring='STD')
-draw.tiers("C", 1, 20, 5, XLOW=5)
-draw.tiers("F", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
-draw.tiers("G", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
+ draw.tiers("PG", 1, 50, 10, highcolor=500, XLOW=10, scoring='STD')
+ draw.tiers("SG", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
+ draw.tiers("SF", 1, 60, 12, highcolor=400, XLOW=10, scoring='STD')
+ draw.tiers("PF", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
+ draw.tiers("C", 1, 60, 12, highcolor=500, XLOW=10, scoring='STD')
+ draw.tiers("F", 1, 80, 13, highcolor=750, XLOW=10, scoring='STD')
+ draw.tiers("G", 1, 80, 13, highcolor=750, XLOW=10, scoring='STD')
+
+
+
+high.level.tiers = draw.tiers("ALL", 1, 150, 3, XLOW=5, highcolor=720, save=FALSE)
+#print(high.level.tiers)
+#print(high.level.tiers[1])
+ nt.std.1 = draw.tiers("ALL", 1, high.level.tiers[1], 10, XLOW=10, highcolor=720)
+ nt.std.2 = draw.tiers("ALL", high.level.tiers[1]+1, high.level.tiers[1]+high.level.tiers[2], 8, adjust=1, XLOW=18, highcolor=720, num.higher.tiers=length(nt.std.1))
+ nt.std.3 = draw.tiers("ALL", high.level.tiers[1]+high.level.tiers[2]+1, high.level.tiers[1]+high.level.tiers[2]+high.level.tiers[3], 8, adjust=2, XLOW=20, highcolor=720, num.higher.tiers=(length(nt.std.1)+length(nt.std.2)))
 
 
 ## Weekly

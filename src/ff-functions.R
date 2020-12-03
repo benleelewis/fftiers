@@ -91,10 +91,13 @@ draw.tiers <- function(pos='all', low=1, high=100, k=3, adjust=0, XLOW=0, highco
 
 	dat = read.delim(csv_path, sep=",")
 	if (thisweek == 0) colnames(dat)= c("Rank","Player.Name","Team","Position","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
-	#Need to order them by Avg? Kawhi and Butler are off (are ~20, should be 5-6)
+	#Need to order them by Avg.Rank
 	dat <- dat %>%
-		arrange(Avg.Rank)
-		mutate(Rank =  row_number())
+		arrange(Avg.Rank) 
+	#Renumber rank column after sorting
+	dat$Rank <- seq.int(nrow(dat))
+	#Giannis' name is too long to display properly	
+	dat$Player.Name <- sub( "Giannis", "G", dat$Player.Name)
 	#if (thisweek >= 1) colnames(dat)= c("Rank","Player.Name","Matchup","Best.Rank","Worst.Rank","Avg.Rank","Std.Dev")
 	if (k <= 10) highcolor <- 360
 	if (k > 11) highcolor <- 450
@@ -190,16 +193,17 @@ error.bar.plot <- function(pos="Overall", low=1, high=24, k=8, format="NA", titl
 
 	this.pos$nchar 	= nchar(as.character(this.pos$Player.Name))
 	this.pos$Tier 	= factor(this.pos$mcluster)
-
+	#print(this.pos$Tier)
 	if (num.higher.tiers>0) this.pos$Tier 	= as.character(as.numeric(as.character(this.pos$mcluster))+num.higher.tiers)
-
-	bigfont = c("QB","TE","K","DST", "PPR-TE", "TE-HALF", "TE-PPR")
-	smfont = c("Overall")
+	#print(this.pos$Tier)
+	bigfont = c("WR","FLX", "WR-PPR","FLX-PPR")
+	#			 "WR-HALF","FLX-HALF", 'ALL', 'ALL-PPR', 'ALL-HALF-PPR')
+	smfont = c("PG", "SF")
 	#tinyfont = c("WR","FLX", "WR-PPR","FLX-PPR", 
 	#			 "WR-HALF","FLX-HALF", 'ALL', 'ALL-PPR', 'ALL-HALF-PPR')
-	tinyfont = c("PG","SG", "SF", "PF", "C", "G", "F")
+	tinyfont = c( "C", "G",  "F","SG", "PF", "ALL")
 	if (tpos %in% bigfont) {font = 3.5; barsize=1.5;  dotsize=2;   }
-	if (tpos %in% smfont)  {font = 3;   barsize=1.25; dotsize=1.5; }
+	if (tpos %in% smfont)  {font = 2.75;   barsize=1.25; dotsize=1.5; }
 	if (tpos %in% tinyfont){font = 2.5; barsize=1;    dotsize=1;   }
 	if (tpos %in% "ALL")   {font = 2.4; barsize=1;    dotsize=0.8;   }
 	if (tpos %in% "all")   {font = 2.4; barsize=1;    dotsize=0.8;   }
@@ -247,9 +251,11 @@ error.bar.plot <- function(pos="Overall", low=1, high=24, k=8, format="NA", titl
 		gd.outfilecsv 	= paste(gd.outputdircsv, "weekly-", tpos, ".csv", sep="")
 	}
 	this.pos$position.rank <- this.pos$X <- this.pos$mcluster <- this.pos$nchar <- NULL
+	#print(this.pos$Tier)
+	#print("Debug 1")
 
 	# Reorder for online spreadsheet
-	if (is.tpos.all(tpos)) this.pos = this.pos[,c(1:2,8,3:7)]
+	#if (is.tpos.all(tpos)) this.pos = this.pos[,c(1:2,8,3:7)]
 	write.csv(this.pos, outfilecsv)
 
 	if (adjust <= 0) write.csv(  this.pos, gd.outfilecsv, row.names=FALSE)
@@ -260,13 +266,20 @@ error.bar.plot <- function(pos="Overall", low=1, high=24, k=8, format="NA", titl
 	    ggsave(file=outfile, width=9.5, height=8, dpi=DPI)
 		ggsave(file=gd.outfile, width=9.5, height=8, dpi=DPI)
     }
-	
+	#print(this.pos$Tier)
+	#print("Debug 2")
+
 	if (is.tpos.all(tpos)) {
 		val = c()
+		#print(this.pos$Tier)
+		#print(min(as.numeric(levels(factor(this.pos$Tier)))))
+		#print(max(as.numeric(levels(factor(this.pos$Tier)))))
 		for (i in min(as.numeric(levels(factor(this.pos$Tier)))):max(as.numeric(levels(factor(this.pos$Tier)))))  {
 			val = c(val, sum(this.pos$Tier==i))
 		}
 		return(val)
 	}
+	#debug
+	#return( c(50,152,200))
 	return(num.tiers)
 }
